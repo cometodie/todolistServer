@@ -1,13 +1,17 @@
 var ObjectID = require("mongodb").ObjectID;
-module.exports = function(app, db, Note) {
-  app.get("/notes", (req, res) => {
+var express = require('express');
+var router = express.Router();
+var Note = require('../model/note_sсheme');
+
+
+  router.get("/notes", (req, res) => {
     Note.find({}, (err, results) => {
       if(err) return send(err);
       res.send(results);
     })
   });
 
-  app.get("/notes/:id", (req, res) => {
+  router.get("/notes/:id", (req, res) => {
     const id = req.params.id;
     Note.findById(id, (err, item) => {
       if (err) {
@@ -18,7 +22,7 @@ module.exports = function(app, db, Note) {
     });
   });
 
-  app.delete("/notes/:id", (req, res) => {
+  router.delete("/notes/:id", (req, res) => {
     const id = req.params.id;
     const details = { _id: new ObjectID(id) };
     Note.remove({_id: details}, (err, result) => {
@@ -27,7 +31,7 @@ module.exports = function(app, db, Note) {
     });
   });
 
-  app.put("/notes/:id", (req, res) => {
+  router.put("/notes/:id", (req, res) => {
     const id = req.params.id;
     const details = { _id: new ObjectID(id) };
     Note.update({ _id: details }, req.body, function(err, result) {
@@ -36,7 +40,7 @@ module.exports = function(app, db, Note) {
     });
   });
 
-  app.post("/notes", (req, res) => {
+  router.post("/notes", (req, res) => {
     let note = new Note({
       text: req.body.text,
       title: req.body.title
@@ -46,4 +50,5 @@ module.exports = function(app, db, Note) {
       res.send(note);
     });
   });
-};
+
+  module.exports = router;

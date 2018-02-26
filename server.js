@@ -1,7 +1,9 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const db = require("./config/db");
+const dbUrl = require("./config/db");
 const app = express();
+const session = require('express-session')
+const MongoStore = require('connect-mongo')(session);
 
 var mongoose = require("mongoose");
 var Schema = mongoose.Schema;
@@ -10,7 +12,21 @@ mongoose.Promise = global.Promise;
 
 const port = 8000;
 
+mongoose.connect(dbUrl.url);
+var db = mongoose.connection;
+
+db.on('error', console.error.bind(console, 'connection error:'));
+
 app.use(bodyParser.json());
+app.use(session({
+  secret: 'work hard',
+  resave: true,
+  saveUninitialized: false,
+  store: new MongoStore({
+    mongooseConnection: db
+  })
+}));
+
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header(
@@ -22,13 +38,9 @@ app.use(function(req, res, next) {
   next();
 });
 
+var routes = require("./app/routes");
+app.use('/', routes);
 
-var noteScheme = require('./app/schemes/note_sheme')(Schema, mongoose);
-
-mongoose.connect(db.url, (err, database) => {
-  if (err) return console.log(err);
-  require("./app/routes")(app, database, noteScheme);
-  app.listen(port, () => {
-    console.log("We are live on " + port);
-  });
-});
+app.listen(8000, function () {
+  console.log('Express app listening on port 8000');
+});   
