@@ -1,0 +1,19 @@
+{
+  "name": "mongoapp",
+  "version": "1.0.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cometodie/todolistServer.git"
+  },
+  "dependencies": {
+    "body-parser": "^1.16.0",
+    "express": "^4.14.0",
+    "mongodb": "^2.2.22",
+    "mongoose": "^5.0.7",
+    "passport-local": "^1.0.0",
+    "passport-local-mongoose": "^4.5.0"
+  },
+  "devDependencies": {
+    "nodemon": "^1.11.0"
+  }
+}
